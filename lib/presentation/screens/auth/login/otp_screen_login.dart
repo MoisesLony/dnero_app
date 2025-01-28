@@ -3,6 +3,7 @@ import 'package:dnero_app_prueba/config/theme/app_theme.dart';
 import 'package:dnero_app_prueba/infrastructure/datasources/remote/aut_service.dart';
 import 'package:dnero_app_prueba/presentation/providers/token_provider.dart';
 import 'package:dnero_app_prueba/presentation/widgets/shared/error_dialog.dart';
+import 'package:dnero_app_prueba/presentation/widgets/shared/otp_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -36,14 +37,14 @@ class OtpScreenLogin extends ConsumerWidget {
       if (!context.mounted) return;
 
       try {
-        final token = await authService.verifyOtp('70883062', otp); // Call API to verify OTP
-        ref.read(tokenProvider.notifier).state = token; // Save token using the provider
-
-        ShowErrorDialog.show(context, "Error", "si ${token}");
+        final token =
+            await authService.verifyOtp('70883062', otp); // Call API to verify OTP
+            ref.read(tokenProvider.notifier).state = token;// Save token using the provider
+        context.go('/welcome');
         print('Token: $token'); // Print the token for debugging
+        // Save the token or proceed to the next step
       } catch (e) {
-        ShowErrorDialog.show(context, "Error", "Failed to verify the OTP");
-        print('Error: $e');
+        print('Error: $e'); // Print error if request fails
       }
     }
 
@@ -56,34 +57,8 @@ class OtpScreenLogin extends ConsumerWidget {
           padding: EdgeInsets.all(16.0 * scalingFactor),
           child: Column(
             children: [
-              Text(
-                "Iniciar sesión",
-                style: TextStyle(
-                  fontSize: 22 * scalingFactor,
-                  color: textColor,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 5 * scalingFactor),
-              Text(
-                'Enter the code sent to',
-                style: TextStyle(
-                  fontSize: 22 * scalingFactor,
-                  color: textColor,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              Text(
-                'xxxx-$lastFourDigits',
-                style: TextStyle(
-                  fontSize: 22 * scalingFactor,
-                  color: textColor2,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              SizedBox(height: 70 * scalingFactor),
+              OtpWidget(scalingFactor: scalingFactor, lastFourDigits: lastFourDigits, textColor: textColor, textColor2: textColor2,text: 'Iniciar Sesión',),
+              SizedBox(height: 40 * scalingFactor),
               Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10 * scalingFactor),

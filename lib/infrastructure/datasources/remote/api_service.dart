@@ -59,4 +59,24 @@ class ApiService {
       throw Exception('Error ${response.statusCode}: $responseBody'); // Throw error for other status codes
     }
   }
+
+   // Method for GET requests
+
+  Future<dynamic> get(String endpoint,{String? token}) async{
+    final headers = {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token', // Include token if available
+    };
+
+    final response = await http.get(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: headers
+    );
+
+  if (response.statusCode >= 200 && response.statusCode < 300){
+    return json.decode(response.body);
+  } else{
+    throw Exception('Error: ${response.statusCode}: ${response.body}'); //Throw error for other status codes
+  }
+  }
 }

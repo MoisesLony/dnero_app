@@ -130,6 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 15 * scalingFactor),
                   child: FadeInRight(
+                    
                     child: Text(
                       "Inicia Sesión",
                       style: TextStyle(

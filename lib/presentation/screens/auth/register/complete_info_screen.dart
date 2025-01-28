@@ -7,6 +7,7 @@ import 'package:dnero_app_prueba/presentation/providers/profile_image_provider.d
 import 'package:dnero_app_prueba/presentation/providers/token_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../infrastructure/repositories/auth_repository_impl.dart';
 
@@ -107,13 +108,8 @@ class CompleteInfoScreen extends ConsumerWidget {
           image: resizedFile, // Send the resized file
           token: token,
         );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Información actualizada con éxito"),
-            backgroundColor: Colors.green,
-          ),
-        );
+        context.go('/welcome');
+  
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -140,13 +136,15 @@ class CompleteInfoScreen extends ConsumerWidget {
         sliver: SliverList(
           delegate: SliverChildListDelegate(
             [
-              Text(
-                "Completa tu información",
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24 * heightFactor,
-                  color: textColor,
+              Center(
+                child: Text(
+                  "Completa tu información",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24 * heightFactor,
+                    color: textColor,
+                  ),
                 ),
               ),
               SizedBox(height: 30 * heightFactor),
@@ -157,7 +155,7 @@ class CompleteInfoScreen extends ConsumerWidget {
                     alignment: Alignment.bottomRight,
                     children: [
                       CircleAvatar(
-                        radius: 50,
+                        radius: 60 * heightFactor ,
                         backgroundColor: Colors.grey[200],
                         backgroundImage: profileImage != null
                             ? FileImage(File(profileImage.path))
@@ -232,7 +230,7 @@ class CompleteInfoScreen extends ConsumerWidget {
               SizedBox(height: 80 * heightFactor),
 
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
+                padding: const EdgeInsets.fromLTRB(25, 0, 25, 25),
                 child: SizedBox(
                  width:  90 * heightFactor,
                   height: 40 * heightFactor,
@@ -255,12 +253,18 @@ class CompleteInfoScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
+                  
                 ),
               ),
+              
             ],
+            
           ),
+          
         ),
+        
       ),
+  
     ],
   ),
 );
@@ -276,18 +280,11 @@ class CompleteInfoScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Label for the text field
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w300,
-            fontFamily: 'Poppins',
-            color: textColor,
-          ),
-        ),
+        
         // Text field for user input
         TextField(
           onChanged: onChanged,
+
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -295,6 +292,7 @@ class CompleteInfoScreen extends ConsumerWidget {
             color: textColor,
           ),
           decoration: InputDecoration(
+            labelText: label,
             hintText: value,
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: textColor.withOpacity(0.3), width: 2),
@@ -302,10 +300,10 @@ class CompleteInfoScreen extends ConsumerWidget {
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: textColor, width: 2),
             ),
-            contentPadding: const EdgeInsets.only(bottom: -20),
+            contentPadding: const EdgeInsets.only(bottom: -8),
           ),
         ),
-        SizedBox(height: 20),
+        SizedBox(height: 33),
       ],
     );
   }

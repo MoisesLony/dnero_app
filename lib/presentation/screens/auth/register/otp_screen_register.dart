@@ -2,6 +2,7 @@ import 'package:dnero_app_prueba/config/theme/app_theme.dart';
 import 'package:dnero_app_prueba/infrastructure/datasources/remote/aut_service.dart';
 import 'package:dnero_app_prueba/presentation/providers/token_provider.dart';
 import 'package:dnero_app_prueba/presentation/widgets/shared/error_dialog.dart';
+import 'package:dnero_app_prueba/presentation/widgets/shared/otp_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -59,33 +60,8 @@ class OtpScreenRegister extends ConsumerWidget {
           padding: EdgeInsets.all(16.0 * scalingFactor),
           child: Column(
             children: [
-              Text(
-                "Regístrate",
-                style: TextStyle(
-                  fontSize: 22 * scalingFactor,
-                  color: textColor,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 5 * scalingFactor),
-              Text(
-                'Escribe el código enviado a',
-                style: TextStyle(
-                  fontSize: 22 * scalingFactor,
-                  color: textColor,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              Text(
-                'xxxx-$lastFourDigits', // Getting the last 4 digits
-                style: TextStyle(
-                    fontSize: 22 * scalingFactor,
-                    color: textColor2,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400),
-              ),
-              SizedBox(height: 70 * scalingFactor),
+              OtpWidget(scalingFactor: scalingFactor, lastFourDigits: lastFourDigits, textColor: textColor, textColor2: textColor2,text: 'Regístrate',),
+              SizedBox(height: 40 * scalingFactor),
               Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12 * scalingFactor),

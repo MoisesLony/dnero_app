@@ -6,7 +6,10 @@ import 'package:dnero_app_prueba/presentation/screens/auth/login/login_screen.da
 import 'package:dnero_app_prueba/presentation/screens/auth/login/otp_screen_login.dart';
 import 'package:dnero_app_prueba/presentation/screens/auth/register/otp_screen_register.dart';
 import 'package:dnero_app_prueba/presentation/screens/auth/register/register_screen.dart';
+import 'package:dnero_app_prueba/presentation/screens/categories/categories_screen.dart';
 import 'package:dnero_app_prueba/presentation/screens/welcome/home_screen.dart';
+import 'package:dnero_app_prueba/presentation/screens/welcome/prueba.dart';
+import 'package:dnero_app_prueba/presentation/screens/welcome/welcome_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -26,7 +29,7 @@ class AppRouter {
 
       GoRoute
       (path: "/register",
-      builder: (context,state) => RegisterScreen(),
+      builder: (context,state) => const RegisterScreen(),
       ),
 
       GoRoute(
@@ -55,7 +58,11 @@ class AppRouter {
 
           GoRoute(
             path: '/welcome',
-            builder: (context, state) =>  LoginScreen(),
+            builder: (context, state) =>  WelcomeScreen(),
+            ),
+
+            GoRoute(path: '/category',
+            builder: (context, state) => CategorySelectionScreen(),
             )
     ]
   );

@@ -35,5 +35,24 @@ Future<void> updateUser({
     token: token,
   );
 }
+
+  @override
+  Future<Map<String, dynamic>> fetchUserInfo(String token) async {
+    try{
+      return await authService.fetchUserInfo(token);
+    } catch (e){
+      throw Exception('Error fetching categories: $e');
+    }
+  }
+  
+  @override
+  Future<List<Map<String, dynamic>>> getCategory(String token) async {
+  try {
+    return await authService.getCategory(token);
+  } catch (e) {
+    // Manejar errores aquí si es necesario
+    throw Exception('Error fetching categories: $e');
+  }
+}
 }
 
