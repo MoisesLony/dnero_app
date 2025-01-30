@@ -1,339 +1,317 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:dnero_app_prueba/config/theme/app_theme.dart';
-import 'package:dnero_app_prueba/presentation/providers/categories_provider.dart';
+import 'package:dnero_app_prueba/presentation/image/image_cache_provider.dart';
+import 'package:dnero_app_prueba/presentation/providers/selected_categories_provider.dart';
 import 'package:dnero_app_prueba/presentation/providers/token_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:dnero_app_prueba/presentation/providers/categories_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-class CategorySelectionScreen extends ConsumerWidget {
+class CategorySelectionScreen extends ConsumerStatefulWidget {
   const CategorySelectionScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Fetch token state
-    final token = ref.watch(tokenProvider);
+  ConsumerState<CategorySelectionScreen> createState() => _CategorySelectionScreenState();
+}
 
-    // Delay the modification of the provider to avoid the "building widget tree" error
+class _CategorySelectionScreenState extends ConsumerState<CategorySelectionScreen> {
+  @override
+  void initState() {
+    super.initState();
     Future.microtask(() {
-      if (token != null) {
-        ref.read(categoriesProvider.notifier).fetchCategories(token);
-      }
+      // Fetch categories when the screen initializes
+      final token = ref.watch(tokenProvider);
+      ref.read(categoriesProvider.notifier).fetchCategories(token!);
     });
+  }
 
-    // Fetch categories state from provider
+  @override
+  Widget build(BuildContext context) {
+    // Watch category provider state
     final categoryState = ref.watch(categoriesProvider);
-
-  
-  
-
-    // Screen size variables
     final Size screenSize = MediaQuery.of(context).size;
-    final double screenWidth = screenSize.width;
-    final double screenHeight = screenSize.height;
-
-    final Color textColor1 = AppTheme.textPrimaryColor;
-    final Color textColor2 = AppTheme.primaryColor;
-
-    // Dynamic opacity calculation
-    final dynamicOpacity = (screenWidth / 1000).clamp(0.5, 0.8);
 
     return Scaffold(
       body: categoryState.when(
-        
-        loading: () => const Center(
-          
-          child: CircularProgressIndicator(), // Show loading spinner
-        ),
-        error: (error, _) => Center(
-          child: Text(
-            'Error: $error',
-            style: const TextStyle(color: Colors.red),
-          ),
-        ),
-        data: (categories) { 
-            // Print the length of the categories
-    print('Categories length: ${categories.length}');
+        loading: () => _buildLoading(),
+        error: (error, _) => _buildError(error),
+        data: (categories) => _buildCategorySelection(screenSize, categories),
+      ),
+    );
+  }
 
-    if (categories.isEmpty) {
-      return const Center(
-        child: Text('No categories available'),
-      );
-    }
-          return SingleChildScrollView(
-          child: Column(
-            
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: screenHeight * 0.07),
-                
-                child: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        
-                        text: "Elige lo que te ",
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.1,
-                          fontWeight: FontWeight.bold,
-                          color: textColor1,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                      TextSpan(
-                        text: "\ngusta",
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.1,
-                          fontWeight: FontWeight.bold,
-                          color: textColor2,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                      
-                    ],
-                    
-                  ),
-                  
-                ),
-                
-              ),
-              
-              Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (categories.length > 0) 
-                CircleCategoryWidget(
-                  category: categories[0],
-                  size: screenWidth * 0.25, // Tamaño dinámico
-                  color: Colors.transparent,
-                  textColor: Colors.white,
-                    
-                ),
-                if (categories.length > 1) 
-                CircleCategoryWidget(
-                  category: categories[1],
-                  size: screenWidth * 0.3,
-                  color: AppTheme.secondaryColor.withOpacity(dynamicOpacity),
-                  textColor: textColor1,
-                ),
-              ],
-            ),
-            
-            // Segunda fila
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-              if (categories.length > 2)
-                CircleCategoryWidget(
-                category: categories[2],
-                size: screenWidth * 0.22,
-                color: AppTheme.secondaryColor.withOpacity(dynamicOpacity),
-                textColor: textColor1,
-                ),
-              if (categories.length > 3) 
-                CircleCategoryWidget(
-                  category: categories[3],
-                  size: screenWidth * 0.26,
-                  color: Colors.transparent,
-                  textColor: Colors.white
-                ),
-                if (categories.length > 4) 
-                CircleCategoryWidget(
-                  category: categories[4],
-                  size: screenWidth * 0.23,
-                  color: Colors.transparent,
-                  textColor: Colors.white
-                ),
-              ],
-            ),
-            // Tercera fila
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (categories.length > 5) 
-                CircleCategoryWidget(
-                  category: categories[5],
-                  size: screenWidth * 0.17,
-                  color: Colors.transparent,
-                  textColor: Colors.white
-                ),
-                if (categories.length > 6) 
-                CircleCategoryWidget(
-                  category: categories[6],
-                  size: screenWidth * 0.21,
-                  color: Colors.transparent,
-                  textColor: Colors.white
-                ),
-                if (categories.length > 7) 
-                CircleCategoryWidget(
-                  category: categories[7],
-                  size: screenWidth * 0.22,
-                  color: AppTheme.secondaryColor.withOpacity(dynamicOpacity),
-                  textColor: textColor1,
-                ),
-                if (categories.length > 8) 
-                CircleCategoryWidget(
-                  category: categories[8],
-                  size: screenWidth * 0.15,
-                  color: Colors.transparent,
-                  textColor: Colors.white
-                ),
-              ],
-            ),
-            // Cuarta fila
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (categories.length > 9) 
-                CircleCategoryWidget(
-                  category: categories[9],
-                  size: screenWidth * 0.27,
-                  color: AppTheme.secondaryColor.withOpacity(dynamicOpacity),
-                  textColor: textColor1,
-                ),
-                if (categories.length > 10) 
-                CircleCategoryWidget(
-                  category: categories[10],
-                  size: screenWidth * 0.23,
-                  color: Colors.transparent,
-                  textColor: Colors.white
-                ),
-                if (categories.length >11) 
-                CircleCategoryWidget(
-                  category: categories[11],
-                  size: screenWidth * 0.2,
-                  color: Colors.transparent,
-                  textColor: Colors.white
-                ),
-              ],
-            ),
-            // Última fila
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (categories.length > 12) 
-                CircleCategoryWidget(
-                  category: categories[12],
-                  size: screenWidth * 0.18,
-                  color: Colors.transparent,
-                  textColor: Colors.white
-                ),
-                if (categories.length > 13) 
-                CircleCategoryWidget(
-                  category: categories[13],
-                  size: screenWidth * 0.22,
-                  color: AppTheme.secondaryColor.withOpacity(dynamicOpacity),
-                  textColor: textColor1,
-                ),
-                if (categories.length > 14) 
-                CircleCategoryWidget(
-                  category: categories[14],
-                  size: screenWidth * 0.2,
-                  color: Colors.transparent,
-                  textColor: Colors.white
-                ),
-              ],
-            ),
-              // Add additional rows for categories
-              SizedBox(height: screenHeight * 0.05),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle next button
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.3,
-                    vertical: screenHeight * 0.02,
-                  ),
-                ),
-                child: Text(
-                  "Siguiente",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: screenWidth * 0.045,
-                  ),
-                ),
-              ),
-            ],
+  // Displays a loading animation while fetching categories
+  Widget _buildLoading() {
+    return Center(
+      child: LoadingAnimationWidget.fourRotatingDots(
+        color: AppTheme.primaryColor,
+        size: 150,
+      ),
+    );
+  }
+
+  // Displays an error message in case of failure
+  Widget _buildError(dynamic error) {
+    return Center(
+      child: Text('Error: $error', style: const TextStyle(color: Colors.red)),
+    );
+  }
+
+  // Builds the main category selection UI
+  Widget _buildCategorySelection(Size screenSize, List<Map<String, String>> categories) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildTitle(screenSize),
+          _buildCategoryRows(screenSize, categories),
+          SizedBox(height: screenSize.height * 0.05),
+          CategorySelectionButton(
+            screenWidth: screenSize.width,
+            screenHeight: screenSize.height,
+            buttonColor: AppTheme.secondaryColor,
+            textColor: AppTheme.textPrimaryColor,
           ),
-        );
-        }
+        ],
+      ),
+    );
+  }
+
+  // Builds the screen title dynamically adjusting text size
+  Widget _buildTitle(Size screenSize) {
+    return Padding(
+      padding: EdgeInsets.only(top: screenSize.height * 0.08),
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: "Elige lo que te ",
+              style: TextStyle(
+                fontSize: screenSize.width * 0.1,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.textPrimaryColor,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            TextSpan(
+              text: "\ngusta",
+              style: TextStyle(
+                fontSize: screenSize.width * 0.1,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryColor,
+                fontFamily: 'Poppins',
+                height: 0.75,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Builds category rows dynamically, maintaining the specified structure
+  Widget _buildCategoryRows(Size screenSize, List<Map<String, String>> categories) {
+    return Column(
+      children: [
+        // Row 1
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 30, 3, 0),
+              child: CircleCategoryWidget(category: categories[10], size: screenSize.width * (102 / 400), fontSize: 16),
+            ),
+            CircleCategoryWidget(category: categories[12], size: screenSize.width * (135 / 400), fontSize: 16),
+          ],
+        ),
+        // Row 2
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 5, 3, 0),
+              child: CircleCategoryWidget(category: categories[11], size: screenSize.width * (85 / 400), fontSize: 12),
+            ),
+            CircleCategoryWidget(category: categories[0], size: screenSize.width * (104 / 400), fontSize: 12),
+            CircleCategoryWidget(category: categories[1], size: screenSize.width * (97 / 400), fontSize: 12),
+          ],
+        ),
+        // Row 3
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(2, 0, 0, 18),
+              child: CircleCategoryWidget(category: categories[13], size: screenSize.width * (67 / 400), fontSize: 9.5),
+            ),
+            CircleCategoryWidget(category: categories[2], size: screenSize.width * (86 / 400), fontSize: 12),
+            CircleCategoryWidget(category: categories[6], size: screenSize.width * (87 / 400), fontSize: 12),
+            CircleCategoryWidget(category: categories[4], size: screenSize.width * (63 / 400), fontSize: 12),
+          ],
+        ),
+        // Row 4
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleCategoryWidget(category: categories[8], size: screenSize.width * (112 / 400), fontSize: 16),
+            CircleCategoryWidget(category: categories[5], size: screenSize.width * (97 / 400), fontSize: 14),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 5),
+              child: CircleCategoryWidget(category: categories[9], size: screenSize.width * (82 / 400), fontSize: 10),
+            ),
+          ],
+        ),
+        // Row 5
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleCategoryWidget(category: categories[7], size: screenSize.width * (75 / 400), fontSize: 14),
+            CircleCategoryWidget(category: categories[3], size: screenSize.width * (91 / 400), fontSize: 14),
+          ],
+        ),
+      ],
+    );
+  }
+}
+// Widget for displaying a category item
+class CircleCategoryWidget extends ConsumerWidget {
+  final Map<String, String> category;
+  final double size;
+  final double fontSize;
+
+  const CircleCategoryWidget({
+    super.key,
+    required this.category,
+    required this.size,
+    required this.fontSize,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final imageCache = ref.watch(imageCacheProvider);
+    final Uint8List? cachedImage = imageCache[category["id"]];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 4.5),
+      child: GestureDetector(
+        onTap: () => ref.read(selectedCategoriesProvider.notifier).toggleCategory(category['id']!),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            _buildCategoryImage(cachedImage, category["image"]!),
+            _buildOverlay(ref.watch(selectedCategoriesProvider).contains(category["id"])),
+            _buildCategoryText(ref.watch(selectedCategoriesProvider).contains(category["id"])),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Builds the category image, checking if it's cached
+  Widget _buildCategoryImage(Uint8List? cachedImage, String base64String) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        image: DecorationImage(
+          image: cachedImage != null
+              ? MemoryImage(cachedImage)
+              : MemoryImage(base64Decode(base64String)),
+          fit: BoxFit.cover,
+        ),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 5, offset: const Offset(0, 4))],
+      ),
+    );
+  }
+
+  // Builds the overlay effect when a category is selected
+  Widget _buildOverlay(bool isSelected) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 50),
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: isSelected ? AppTheme.secondaryColor.withOpacity(0.76) : Colors.transparent,
+      ),
+    );
+  }
+
+  // Displays the category text inside the circle
+  Widget _buildCategoryText(bool isSelected) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: isSelected ? AppTheme.secondaryColor.withOpacity(0.56) : Colors.black.withOpacity(0.35),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        category["name"] ?? "",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: isSelected ? AppTheme.textPrimaryColor : Colors.white,
+          fontWeight: FontWeight.w700,
+          fontSize: fontSize,
+          fontFamily: 'Poppins',
+        ),
       ),
     );
   }
 }
-
-class CircleCategoryWidget extends StatelessWidget {
-  final Map<String, String> category;
-  final double size;
-  final Color color;
+// Button to confirm category selection and proceed
+class CategorySelectionButton extends ConsumerWidget {
+  final double screenWidth;
+  final double screenHeight;
+  final Color buttonColor;
   final Color textColor;
 
-  const CircleCategoryWidget({
+  const CategorySelectionButton({
     Key? key,
-    required this.category,
-    required this.size,
-    required this.color,
+    required this.screenWidth,
+    required this.screenHeight,
+    required this.buttonColor,
     required this.textColor,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: GestureDetector(
-        onTap: () {
-          // Handle tap on category
-        },
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              width: size,
-              height: size,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: MemoryImage(
-                    const Base64Decoder().convert(category["image"]!),
-                  ),
-                  fit: BoxFit.cover,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 5,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: size,
-              height: size,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: color,
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                category["name"]!,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: textColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedCategories = ref.watch(selectedCategoriesProvider);
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300), // Animation when changing state
+      child: ElevatedButton(
+        onPressed: selectedCategories.isNotEmpty
+            ? () {
+                context.push('/home');
+                print("Categorías seleccionadas: $selectedCategories");
+              }
+            : null, // Disabled if no categories are selected
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          backgroundColor: selectedCategories.isNotEmpty
+              ? buttonColor
+              : Colors.grey.shade400, // Turns gray when disabled
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.3,
+            vertical: screenHeight * 0.02,
+          ),
+        ),
+        child: Text(
+          "Siguiente",
+          style: TextStyle(
+            color: textColor,
+            fontWeight: FontWeight.bold,
+            fontSize: screenWidth * 0.045,
+          ),
         ),
       ),
     );

@@ -6,6 +6,7 @@ import 'package:dnero_app_prueba/presentation/screens/welcome/background_video.d
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -22,8 +23,8 @@ class WelcomeScreen extends ConsumerWidget {
     final token = ref.watch(tokenProvider);
 
     // Fetch user info when the widget builds
-    if (token2 != null && ref.read(userInfoProvider).isEmpty) {
-      ref.read(userInfoProvider.notifier).fetchUserInfo(token2);
+    if (token != null && ref.read(userInfoProvider).isEmpty) {
+      ref.read(userInfoProvider.notifier).fetchUserInfo(token);
     }
 
     
@@ -47,17 +48,23 @@ class WelcomeScreen extends ConsumerWidget {
               child: Center(
                 child: Builder(
                   builder: (_) {
-                    if (token2 == null) {
-                      return const Center(
-                        child: CircularProgressIndicator(), // Show loading when token is null
-                      );
+                    if (token == null) {
+                      return  Center(child: LoadingAnimationWidget.fourRotatingDots(
+                          color: secondaryTextColor,
+                          size: 150,
+                          )
+                        );
                     }
+                    
 
                     if (userInfo.isEmpty) {
-                      return const Center(
-                        child: CircularProgressIndicator(), // Show loading when userInfo is empty
-                      );
+                      return Center(child: LoadingAnimationWidget.fourRotatingDots(
+                          color: secondaryTextColor,
+                          size: 150,
+                          )
+                        );
                     }
+                    
 
                     if (userInfo.containsKey('error')) {
                       return Center(
@@ -73,24 +80,32 @@ class WelcomeScreen extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        BounceInDown(
-                          from: 100,
-                          duration: const Duration(seconds: 2),
-                          child: Text(
-                            "¡Hola, ${userInfo['firstName']}!",
-                            style: TextStyle(
-                              fontSize: 40 * heightFactor,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontFamily: 'Poppins',
-                              height: 1.3,
+                        TweenAnimationBuilder(
+                            tween: Tween<double>(begin: 0.5, end: 1.0), // Comienza más pequeño y crece al tamaño normal
+                            duration: const Duration(milliseconds: 1500 ),
+                              curve: Curves.easeOut, // Hace que la animación sea más suave
+                              builder: (context, value, child) {
+                                return Transform.scale(
+                                  scale: value, // 🔥 Aplica el escalado gradual
+                                  child: Text(
+                                    "¡Hola, ${userInfo['firstName']}!",
+                                    style: TextStyle(
+                                      fontSize: 40 * heightFactor,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontFamily: 'Poppins',
+                                      height: 1.3,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          ),
-                        ),
+
                         
                         SizedBox(height: 5 * heightFactor),
-                        FadeInRightBig(
-                          duration: const Duration(seconds: 2),
+                        FadeIn(
+                          duration: const Duration(milliseconds: 1500 ),
+                          delay: const Duration(milliseconds: 1500 ),
                           child: RichText(
                             text: TextSpan(
                               children: [
@@ -118,15 +133,16 @@ class WelcomeScreen extends ConsumerWidget {
                           ),
                         ),
                         SizedBox(height: 20 * heightFactor),
-                        BounceInUp(
-                          duration: const Duration(seconds: 2),
+                        FadeInUp(
+                          delay: const Duration(milliseconds: 3000),
+                          duration: const Duration(milliseconds : 1500),
                           from: 250,
                           child: SizedBox(
                             width: 275 * heightFactor,
                             height: 50 * heightFactor,
                             child: ElevatedButton(
                               onPressed: () {
-                                context.push('/category');
+                                context.go('/category');
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(

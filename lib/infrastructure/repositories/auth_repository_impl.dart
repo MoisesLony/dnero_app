@@ -49,10 +49,23 @@ Future<void> updateUser({
   Future<List<Map<String, dynamic>>> getCategory(String token) async {
   try {
     return await authService.getCategory(token);
-  } catch (e) {
-    // Manejar errores aquí si es necesario
-    throw Exception('Error fetching categories: $e');
+  } catch (e, stackTrace) {
+    print("❌ Error fetching recommendations: $e");
+    print("📌 Stack Trace: $stackTrace"); // Useful for debugging
+
+    throw Exception('Error fetching recommendations: $e');
   }
 }
-}
 
+  @override
+   Future<List<Map<String, dynamic>>> getRecommendations(List<String> categoryIds, String token) async {
+    print("📤 Sending API request for recommendations with categories: $categoryIds");
+
+    final response = await authService.getRecommendations(categoryIds, token);
+
+    print("📥 Received API response: $response");
+
+    return response;
+  }
+}
+  

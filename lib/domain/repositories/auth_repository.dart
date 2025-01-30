@@ -22,4 +22,7 @@ abstract class AuthRepository {
 
   /// Fetches all available categories.
   Future<List<Map<String, dynamic>>> getCategory(String token);
+
+  /// Fetches all available recomendations.
+  Future<List<Map<String, dynamic>>> getRecommendations(List<String> categoryIds,String token);
 }

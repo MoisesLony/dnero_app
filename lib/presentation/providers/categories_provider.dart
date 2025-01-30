@@ -1,49 +1,55 @@
 import 'package:dnero_app_prueba/infrastructure/datasources/remote/aut_service.dart';
+import 'package:dnero_app_prueba/presentation/image/image_cache_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// Provider for categories
 final categoriesProvider = StateNotifierProvider<CategoriesNotifier, AsyncValue<List<Map<String, String>>>>(
-  (ref) => CategoriesNotifier(),
+  (ref) => CategoriesNotifier(ref),
 );
 
 class CategoriesNotifier extends StateNotifier<AsyncValue<List<Map<String, String>>>> {
-  CategoriesNotifier() : super(const AsyncValue.loading());
+  final Ref ref;
+  CategoriesNotifier(this.ref) : super(const AsyncValue.loading());
 
-  // Method to fetch categories
   Future<void> fetchCategories(String token) async {
-      try {
-      // Validate token
-      if (token.isEmpty || token == null) {
-        throw Exception('Invalid or missing token');
+    try {
+      if (state is AsyncData && (state as AsyncData).value.isNotEmpty) {
+        print("📌 Categorías ya en caché, evitando recarga...");
+        return;
       }
 
-      // Show loading state
-      state = const AsyncValue.loading();
+      if (token.isEmpty) throw Exception('Invalid or missing token');
 
-      // API call to fetch categories
+      state = const AsyncValue.loading();
+      print("🔄 Fetching categories...");
+
       final response = await AuthService().getCategory(token);
 
-      // Decode base64 images in the category data
-      final categories = response.map((category) {
+      if (response == null || response.isEmpty) {
+        throw Exception("No categories found or API error");
+      }
+
+      final imageCache = ref.read(imageCacheProvider.notifier);
+
+      final List<Map<String, String>> categories = response.map((category) {
+        final id = category["id"].toString();
+        final imageBase64 = category["image"].toString();
+
+        // ✅ Guarda la imagen en caché
+        imageCache.cacheImage(id, imageBase64);
+
         return {
-          "id": category["id"].toString(),
+          "id": id,
           "name": category["name"].toString(),
-          "image": category["image"].toString(),
+          "image": imageBase64,
         };
       }).toList();
 
-      // Validate categories
-      if (categories.isEmpty) {
-        throw Exception('No categories found');
-      }
-
-      // Update state with fetched categories
       state = AsyncValue.data(categories);
+      print("✅ Categorías cargadas correctamente: ${categories.length}");
 
     } catch (e, stackTrace) {
-      // Handle errors and update state
+      print("🚨 Error fetching categories: $e");
       state = AsyncValue.error(e, stackTrace);
-      print("Error fetching categories: $e");
     }
   }
 }
