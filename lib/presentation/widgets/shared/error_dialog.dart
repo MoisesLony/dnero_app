@@ -1,3 +1,4 @@
+import 'package:dnero_app_prueba/config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class ShowErrorDialog extends StatelessWidget {
@@ -9,15 +10,44 @@ class ShowErrorDialog extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(title),
-      content: Text(message),
-      actions: [
-        TextButton(
-          onPressed: (){
-            Navigator.of(context).pop();
+      backgroundColor: Colors.white,
+      title: Center(
+        child: Text(title,style: const TextStyle(
+          color: AppTheme.textPrimaryColor,
+          fontFamily: 'Poppins',
+          fontSize: 25,
+          fontWeight: FontWeight.bold
+        ),),
+      ),
+      content: 
 
-          }, 
-          child: Text("Ok"))
+      Padding(
+        padding: const EdgeInsets.only(top: 5),
+        child: Text(message,
+          style: const TextStyle(
+            color: AppTheme.textPrimaryColor,
+            fontFamily: 'Poppins',
+          ),
+          ),
+      ),
+    
+      actions: [
+        const Divider(),
+        Center(
+          child: TextButton(
+            onPressed: (){
+              Navigator.of(context).pop();
+          
+            }, 
+            child: const Text("Descartar",
+              style:  TextStyle(
+                color: AppTheme.textPrimaryColor,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.bold,
+                
+              ),
+              )),
+        )
       ],
     );
     
@@ -26,6 +56,7 @@ class ShowErrorDialog extends StatelessWidget {
   static void show(BuildContext context, String title,String message) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => ShowErrorDialog(title: title,message: message),
     );
   }

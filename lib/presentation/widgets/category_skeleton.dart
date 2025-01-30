@@ -12,7 +12,6 @@ class CategorySkeleton extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 0,),
           _buildSkeletonCategoryRows(screenSize),
           SizedBox(height: screenSize.height * 0.05),
           _buildButtonPlaceholder(screenSize),

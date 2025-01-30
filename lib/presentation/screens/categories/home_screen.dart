@@ -1,15 +1,13 @@
 import 'dart:typed_data';
-import 'package:dnero_app_prueba/presentation/providers/token_provider.dart';
+
+import 'package:dnero_app_prueba/presentation/screens/welcome/start_screen.dart';
 import 'package:dnero_app_prueba/presentation/widgets/image/image_widget.dart';
+import 'package:dnero_app_prueba/presentation/widgets/shared/drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dnero_app_prueba/config/theme/app_theme.dart';
-import 'package:dnero_app_prueba/presentation/providers/user_info.dart';
-import 'package:dnero_app_prueba/presentation/providers/categories/recommendations_categories_provider.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:shimmer/shimmer.dart';
-  
+import '../../providers/provider_barril.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -19,81 +17,124 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _selectedIndex = 0; // Stores the selected tab index
+  int _selectedIndex = 0;
 
-  final List<String> _routes = [
-    '/home', // Route for Home
-    '/friends', // Route for Friends
-    '/add', // Route for Add
-    '/bookmarks', // Route for Bookmarks
-    '/notifications', // Route for Notifications
-  ];
+void _logoutAndRestart() {
+  // ✅ Show logout animation before navigating
+  showGeneralDialog(
+    context: context,
+    barrierDismissible: false,
+    transitionDuration: const Duration(milliseconds: 1500),
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return ScaleTransition(
+        scale: Tween<double>(
+          begin: 1.0, // Start at normal size
+          end: 0.0, // Shrinks to zero
+        ).animate(animation),
+        child: const Center(
+          child: CircularProgressIndicator(), 
+        ),
+      );
+    },
+  );
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  // ✅ Reset authentication and user session
+  ref.read(tokenProvider.notifier).state = null;
+  ref.invalidate(userInfoProvider);
+  ref.invalidate(recommendationsProvider);
+  ref.invalidate(categoriesProvider);
+  ref.invalidate(selectedCategoriesProvider);
+  ref.invalidate(profileImageProvider);
+  ref.invalidate(formFieldsProvider);
+  ref.invalidate(isLoadingProvider);
+  ref.read(imageCacheProvider.notifier).clearImage("user_profile");
 
-    // Navigate to the corresponding route
-    context.push(_routes[index]);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    Future.microtask(() {
-      final token = ref.watch(tokenProvider);
-      ref.read(userInfoProvider.notifier).fetchUserInfo(token!);
-    });
-  }
-
+  // ✅ Redirect after animation
+  Future.delayed(const Duration(milliseconds: 500), () {
+    Navigator.of(context).pop(); // Close the animation
+    context.go('/'); // Go to the initial route
+  });
+}
+  
+  
   @override
   Widget build(BuildContext context) {
     final userInfo = ref.watch(userInfoProvider);
 
     return Scaffold(
+      // ✅ Drawer with logout option
+      drawer: DrawerWidget(onLogout: _logoutAndRestart),
+
       backgroundColor: Colors.white,
-      body: userInfo.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  _buildHeader(userInfo),
-                  _buildUserInfo(userInfo),
-                  _buildStats(),
-                  Transform.translate(
-                    offset: const Offset(0, 22),
-                    child: const Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 125, 0),
-                      child: Text(
-                        "Recomendaciones",
-                        style: TextStyle(
-                          color: AppTheme.textPrimaryColor,
-                          fontFamily: 'Poppins',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
+      body: Stack(
+        children: [
+          // ✅ Main content
+          SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                _buildHeader(userInfo),
+                _buildUserInfo(userInfo),
+                _buildStats(),
+                Transform.translate(
+                  offset: const Offset(0, 22),
+                  child: const Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 125, 0),
+                    child: Text(
+                      "Recomendaciones",
+                      style: TextStyle(
+                        color: AppTheme.textPrimaryColor,
+                        fontFamily: 'Poppins',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 0),
+                const RecommendationsSection(),
+                const SizedBox(height: 50),
+              ],
+            ),
+          ),
+
+          // ✅ Floating button to open the Drawer
+          Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+                    padding: const EdgeInsets.only(top:40, left: 15),
+                    child: Builder(
+                      builder: (context) => GestureDetector(
+                        onTap: () {
+                          Scaffold.of(context).openDrawer();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent, // Background color of the button
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.menu,
+                            color: Colors.white,
+                            size: 30,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 0),
-                  const RecommendationsSection(),
-                  const SizedBox(height: 50)
-                ],
-              ),
+          ),
+              ],
             ),
-
-      // 🚀 Bottom Navigation Bar
+      // ✅ BottomNavigationBar (inactive)
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.25), // #00000040 → 25% opacity
-              blurRadius: 4, // Blur amount
-              spreadRadius: 0, // Spread amount
-              offset: Offset(4, 0), // X: 4, Y: 0
+              color: Colors.black.withOpacity(0.25),
+              blurRadius: 4,
+              spreadRadius: 0,
+              offset: const Offset(4, 0),
             ),
           ],
         ),
@@ -101,13 +142,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           backgroundColor: Colors.white,
           elevation: 2,
           currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          selectedItemColor: Colors.black, // Color of the selected icon
-          unselectedItemColor: Colors.grey, // Color of the unselected icon
-          showSelectedLabels: false, // Hides selected labels
-          showUnselectedLabels: false, // Hides unselected labels
-          type: BottomNavigationBarType.fixed, // Keeps stable size
-
+          onTap: (index) {}, // No functionality
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.grey,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
@@ -134,6 +174,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
+}
 
   Widget _buildHeader(Map<String, dynamic> userInfo) {
     final backgroundColor = AppTheme.primaryColor;
@@ -213,7 +254,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
-}
 
 class RecommendationsSection extends ConsumerWidget {
   const RecommendationsSection({super.key});
@@ -305,38 +345,45 @@ class RecommendationCard extends StatelessWidget {
     final double rating = (recommendation['calification'] as num?)?.toDouble() ?? 5.0;
     final int roundedRating = rating.floor();
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 5, spreadRadius: 1)],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                image: imageBytes != null
-                    ? DecorationImage(image: MemoryImage(imageBytes), fit: BoxFit.cover)
-                    : const DecorationImage(image: AssetImage("assets/images/default.jpg"), fit: BoxFit.cover),
+    return GestureDetector(
+          onTap: () {
+            context.push('/recommendationDetails', extra: recommendation); 
+          },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 5, spreadRadius: 1)],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  image: imageBytes != null
+                      ? DecorationImage(image: MemoryImage(imageBytes), fit: BoxFit.cover)
+                      : const DecorationImage(image: AssetImage("assets/images/default.jpg"), fit: BoxFit.cover),
+                ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: Colors.black.withOpacity(0.35)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(children: [...List.generate(roundedRating, (_) => Image.asset('assets/background/icono.png', width: 14, height: 12)), const SizedBox(width: 5), Text(rating.toStringAsFixed(1), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 8))]),
-                  Text(recommendation['title'] ?? 'No Title', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-                ],
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(color: Colors.black.withOpacity(0.35)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [...List.generate(roundedRating, (_) => Image.asset('assets/background/icono.png', width: 14, height: 12)), 
+                    const SizedBox(width: 5), Text(rating.toStringAsFixed(1), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 8))]),
+                    Text(recommendation['title'] ?? 'No Title', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
+

@@ -6,7 +6,9 @@ import 'package:http/http.dart' as http;
 class ApiService {
   final String baseUrl = Enviroment.baseUrl;
 
-  // General method for POST requests (JSON data)
+  /* =======================================================
+    General method for POST requests (JSON data)
+     ======================================================= */
   Future<dynamic> post(String endpoint, Map<String, dynamic> data, {String? token}) async {
     final headers = {
       'Content-Type': 'application/json',
@@ -26,7 +28,9 @@ class ApiService {
     }
   }
 
-  // Method for POST requests with multipart/form-data
+  /* =======================================================
+    Method for POST requests with multipart/form-data
+     ======================================================= */
   Future<dynamic> postMultipart(
     String endpoint,
     Map<String, String> fields, {
@@ -60,9 +64,10 @@ class ApiService {
     }
   }
 
-   // Method for GET requests
-
-  Future<dynamic> get(String endpoint,{String? token}) async{
+  /* =======================================================
+    Method for GET requests
+     ======================================================= */
+  Future<dynamic> get(String endpoint, {String? token}) async {
     final headers = {
       'Content-Type': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token', // Include token if available
@@ -70,13 +75,13 @@ class ApiService {
 
     final response = await http.get(
       Uri.parse('$baseUrl$endpoint'),
-      headers: headers
+      headers: headers,
     );
 
-  if (response.statusCode >= 200 && response.statusCode < 300){
-    return json.decode(response.body);
-  } else{
-    throw Exception('Error: ${response.statusCode}: ${response.body}'); //Throw error for other status codes
-  }
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Error: ${response.statusCode}: ${response.body}'); // Throw error for other status codes
+    }
   }
 }

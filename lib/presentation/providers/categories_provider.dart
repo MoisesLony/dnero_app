@@ -2,6 +2,9 @@ import 'package:dnero_app_prueba/infrastructure/datasources/remote/aut_service.d
 import 'package:dnero_app_prueba/presentation/image/image_cache_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/* =======================================================
+  Categories Provider: Fetch and cache category data
+   ======================================================= */
 final categoriesProvider = StateNotifierProvider<CategoriesNotifier, AsyncValue<List<Map<String, String>>>>(
   (ref) => CategoriesNotifier(ref),
 );
@@ -10,18 +13,18 @@ class CategoriesNotifier extends StateNotifier<AsyncValue<List<Map<String, Strin
   final Ref ref;
   CategoriesNotifier(this.ref) : super(const AsyncValue.loading());
 
+  /* =======================================================
+    Fetch categories from API and cache images
+     ======================================================= */
   Future<void> fetchCategories(String token) async {
     try {
       if (state is AsyncData && (state as AsyncData).value.isNotEmpty) {
-        print("📌 Categorías ya en caché, evitando recarga...");
         return;
       }
 
       if (token.isEmpty) throw Exception('Invalid or missing token');
 
       state = const AsyncValue.loading();
-      print("🔄 Fetching categories...");
-
       final response = await AuthService().getCategory(token);
 
       if (response == null || response.isEmpty) {
@@ -34,7 +37,7 @@ class CategoriesNotifier extends StateNotifier<AsyncValue<List<Map<String, Strin
         final id = category["id"].toString();
         final imageBase64 = category["image"].toString();
 
-        // ✅ Guarda la imagen en caché
+        // Cache image
         imageCache.cacheImage(id, imageBase64);
 
         return {
@@ -45,10 +48,7 @@ class CategoriesNotifier extends StateNotifier<AsyncValue<List<Map<String, Strin
       }).toList();
 
       state = AsyncValue.data(categories);
-      print("✅ Categorías cargadas correctamente: ${categories.length}");
-
     } catch (e, stackTrace) {
-      print("🚨 Error fetching categories: $e");
       state = AsyncValue.error(e, stackTrace);
     }
   }

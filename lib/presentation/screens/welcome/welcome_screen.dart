@@ -49,7 +49,7 @@ class WelcomeScreen extends ConsumerWidget {
                   builder: (_) {
                     if (token == null) {
                       return  Center(child: LoadingAnimationWidget.fourRotatingDots(
-                          color: secondaryTextColor,
+                          color: Colors.transparent,
                           size: 150,
                           )
                         );
@@ -58,7 +58,7 @@ class WelcomeScreen extends ConsumerWidget {
 
                     if (userInfo.isEmpty) {
                       return Center(child: LoadingAnimationWidget.fourRotatingDots(
-                          color: secondaryTextColor,
+                          color: Colors.transparent,
                           size: 150,
                           )
                         );

@@ -7,6 +7,7 @@ import 'package:dnero_app_prueba/presentation/widgets/shared/error_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../config/helper/format_phone_number.dart';
 
@@ -126,6 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15 * scalingFactor),
                       child: FadeInRight(
+                        delay: const Duration(milliseconds: 270),
                         child: Text(
                           "Regístrate",
                           style: TextStyle(
@@ -155,6 +157,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15 * scalingFactor),
                       child: TextField(
+                        
                         onTapOutside: (event) {
                           _focusNode.unfocus();
                         },
@@ -169,7 +172,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         onSubmitted: (value) {
                           FocusScope.of(context).unfocus();
                         },
+                      
                         decoration: InputDecoration(
+                        
                           hintText: '0000-0000',
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           enabledBorder: UnderlineInputBorder(
@@ -181,6 +186,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               width: 2 * scalingFactor,
                             ),
                           ),
+                          contentPadding: const EdgeInsets.only(bottom: -20),
                         ),
                         style: TextStyle(
                           fontSize: 18 * scalingFactor,
@@ -219,9 +225,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                           child: _isLoading
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white,
-                                )
+                            ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                child: LoadingAnimationWidget.waveDots (
+                                  color: AppTheme.textPrimaryColor,
+                                  size: 26,
+                                ),
+                                
+                              )
+                            ],
+                          )
                               : Text(
                                   'Siguiente',
                                   style: TextStyle(

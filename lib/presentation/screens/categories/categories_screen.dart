@@ -235,7 +235,7 @@ class CircleCategoryWidget extends ConsumerWidget {
   // Builds the overlay effect when a category is selected
   Widget _buildOverlay(bool isSelected) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 50),
+      duration: const Duration(milliseconds: 500),
       width: size,
       height: size,
       decoration: BoxDecoration(

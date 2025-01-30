@@ -1,15 +1,18 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dnero_app_prueba/presentation/image/image_cache_provider.dart';
 
 /// ✅ Profile image widget with circular border and shadow
-class ProfileImageWidget extends StatelessWidget {
+class ProfileImageWidget extends ConsumerWidget {
   final Uint8List? imageData;
 
   const ProfileImageWidget({super.key, this.imageData});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cachedImage = ref.watch(imageCacheProvider)["user_profile"];
+
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -27,9 +30,11 @@ class ProfileImageWidget extends StatelessWidget {
         backgroundColor: Colors.transparent, // Transparent background for the border
         child: CircleAvatar(
           radius: 68, // Slightly smaller radius to create a border effect
-          backgroundImage: imageData != null
-              ? MemoryImage(imageData!)
-              : const AssetImage("assets/images/default_profile.png") as ImageProvider,
+          backgroundImage: (imageData != null && imageData!.isNotEmpty)
+              ? MemoryImage(imageData!) // ✅ If API loads image, use it
+              : (cachedImage != null
+                  ? MemoryImage(cachedImage) // ✅ Use cached image if available
+                  : const AssetImage("assets/images/default_profile.png") as ImageProvider), // ✅ Default while loading
         ),
       ),
     );

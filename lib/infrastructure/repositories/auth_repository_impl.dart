@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:dnero_app_prueba/domain/repositories/auth_repository.dart';
@@ -9,63 +8,71 @@ class AuthRepositoryImpl implements AuthRepository {
 
   AuthRepositoryImpl(this.authService);
 
+  /* =======================================================
+    Method to verify phone number and request an OTP
+     ======================================================= */
   @override
-  Future<void> verifyPhone(String phone) async{
+  Future<void> verifyPhone(String phone) async {
     await authService.verifyPhone(phone);
   }
 
+  /* =======================================================
+    Method to verify OTP and retrieve JWT token
+     ======================================================= */
   @override
-  Future<String> verifyOtp(String phone, String otp) async{
+  Future<String> verifyOtp(String phone, String otp) async {
     return await authService.verifyOtp(phone, otp);
   }
-  
-@override
-Future<void> updateUser({
-  required String firstName,
-  required String lastName,
-  String? email,
-  File? image,
-  required String token,
-}) async {
-  await authService.updateUser(
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    image: image,
-    token: token,
-  );
-}
 
+  /* =======================================================
+    Method to update user information
+     ======================================================= */
+  @override
+  Future<void> updateUser({
+    required String firstName,
+    required String lastName,
+    String? email,
+    File? image,
+    required String token,
+  }) async {
+    await authService.updateUser(
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      image: image,
+      token: token,
+    );
+  }
+
+  /* =======================================================
+    Method to fetch user information
+     ======================================================= */
   @override
   Future<Map<String, dynamic>> fetchUserInfo(String token) async {
-    try{
+    try {
       return await authService.fetchUserInfo(token);
-    } catch (e){
+    } catch (e) {
+      throw Exception('Error fetching user information: $e');
+    }
+  }
+
+  /* =======================================================
+    Method to fetch categories
+     ======================================================= */
+  @override
+  Future<List<Map<String, dynamic>>> getCategory(String token) async {
+    try {
+      return await authService.getCategory(token);
+    } catch (e) {
       throw Exception('Error fetching categories: $e');
     }
   }
-  
-  @override
-  Future<List<Map<String, dynamic>>> getCategory(String token) async {
-  try {
-    return await authService.getCategory(token);
-  } catch (e, stackTrace) {
-    print("❌ Error fetching recommendations: $e");
-    print("📌 Stack Trace: $stackTrace"); // Useful for debugging
 
-    throw Exception('Error fetching recommendations: $e');
+  /* =======================================================
+    Method to fetch recommendations based on selected categories
+     ======================================================= */
+  @override
+  Future<List<Map<String, dynamic>>> getRecommendations(List<String> categoryIds, String token) async {
+    return await authService.getRecommendations(categoryIds, token);
   }
 }
-
-  @override
-   Future<List<Map<String, dynamic>>> getRecommendations(List<String> categoryIds, String token) async {
-    print("📤 Sending API request for recommendations with categories: $categoryIds");
-
-    final response = await authService.getRecommendations(categoryIds, token);
-
-    print("📥 Received API response: $response");
-
-    return response;
-  }
-}
-  
