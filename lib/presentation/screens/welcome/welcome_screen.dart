@@ -17,8 +17,7 @@ class WelcomeScreen extends ConsumerWidget {
     final heightFactor = size.height / 812; // Normalize height
     final widthFactor = size.width / 375; // Normalize width
     final Color secondaryTextColor = AppTheme.primaryColor;
-    final String token2 = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjcwODgzMDYyIiwiaWF0IjoxNzM3OTk5MzgzLCJleHAiOjE3MzgwODIxODN9.lHHYCW9ItoX4VogL7yI94xuh9U4p0ofUxilGv1s0R_oJMYObav7C_h_qn8OQwEA7G2TXf3Az866wqDFDiSUnS-iDtrhilutEhw4DwWcCLPWD6W6I4FuNb83ukmNO8MfdTV0trUJqV09uRXs3tyFotR5GOhfyrJ_jPk3XLddIm_5aEOtjBYLCiDbLmchkpmzVAWCd4CGzXBxaWyY1iLBq_1SP3ua2zhIyVTm2R0I-_5HX6GCCtt8WCzcPZVlCSI-9RYUyqcnci1CUVVPUogLq4mu_tG8jDc9CxZytsKwSgXqqVuK44c0XsESzr7eXQKjbzqvj-7n8GOCmmwRybZHW1g";
-
+    
     // Fetch token
     final token = ref.watch(tokenProvider);
 

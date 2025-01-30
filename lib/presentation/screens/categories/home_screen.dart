@@ -8,6 +8,8 @@ import 'package:dnero_app_prueba/presentation/providers/user_info.dart';
 import 'package:dnero_app_prueba/presentation/providers/categories/recommendations_categories_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:shimmer/shimmer.dart';
+  
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -17,16 +19,14 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-
-  int _selectedIndex = 0; // Guarda el índice de la pestaña seleccionada
-
+  int _selectedIndex = 0; // Stores the selected tab index
 
   final List<String> _routes = [
-    '/home', // Ruta para Home
-    '/friends', // Ruta para Amigos
-    '/add', // Ruta para Agregar
-    '/bookmarks', // Ruta para Guardados
-    '/notifications', // Ruta para Notificaciones
+    '/home', // Route for Home
+    '/friends', // Route for Friends
+    '/add', // Route for Add
+    '/bookmarks', // Route for Bookmarks
+    '/notifications', // Route for Notifications
   ];
 
   void _onItemTapped(int index) {
@@ -34,19 +34,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       _selectedIndex = index;
     });
 
-    // Navega a la ruta correspondiente
+    // Navigate to the corresponding route
     context.push(_routes[index]);
   }
 
-@override
-void didChangeDependencies() {
-  super.didChangeDependencies();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-  
-    
     Future.microtask(() {
       final token = ref.watch(tokenProvider);
-      ref.read(userInfoProvider.notifier).fetchUserInfoWithImages(token!);
+      ref.read(userInfoProvider.notifier).fetchUserInfo(token!);
     });
   }
 
@@ -57,7 +55,7 @@ void didChangeDependencies() {
     return Scaffold(
       backgroundColor: Colors.white,
       body: userInfo.isEmpty
-          ? const Center(child: CircularProgressIndicator()) 
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Column(
@@ -68,57 +66,75 @@ void didChangeDependencies() {
                   Transform.translate(
                     offset: const Offset(0, 22),
                     child: const Padding(
-                      padding:  EdgeInsets.fromLTRB(0, 0,  125, 0),
-                          child: Text("Recomendaciones",style: TextStyle(
+                      padding: EdgeInsets.fromLTRB(0, 0, 125, 0),
+                      child: Text(
+                        "Recomendaciones",
+                        style: TextStyle(
                           color: AppTheme.textPrimaryColor,
                           fontFamily: 'Poppins',
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
-                        ),),
+                        ),
                       ),
+                    ),
                   ),
-                  const SizedBox(height: 0), 
+                  const SizedBox(height: 0),
                   const RecommendationsSection(),
-                  const SizedBox(height: 50,)
+                  const SizedBox(height: 50)
                 ],
               ),
             ),
 
-            // 🚀 Bottom Navigation Bar
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Colors.black, // Color del icono seleccionado
-        unselectedItemColor: Colors.grey, // Color del icono no seleccionado
-        showSelectedLabels: false, // Oculta etiquetas seleccionadas
-        showUnselectedLabels: false, // Oculta etiquetas no seleccionadas
-        type: BottomNavigationBarType.fixed, // Mantiene tamaño estable
+      // 🚀 Bottom Navigation Bar
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.25), // #00000040 → 25% opacity
+              blurRadius: 4, // Blur amount
+              spreadRadius: 0, // Spread amount
+              offset: Offset(4, 0), // X: 4, Y: 0
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          elevation: 2,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          selectedItemColor: Colors.black, // Color of the selected icon
+          unselectedItemColor: Colors.grey, // Color of the unselected icon
+          showSelectedLabels: false, // Hides selected labels
+          showUnselectedLabels: false, // Hides unselected labels
+          type: BottomNavigationBarType.fixed, // Keeps stable size
 
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.group_outlined),
-            label: "Amigos",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_outlined),
-            label: "Agregar",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark_outline),
-            label: "Guardados",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_outlined),
-            label: "Notificaciones",
-          ),
-        ],
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              label: "Home",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.group_outlined),
+              label: "Friends",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_outlined),
+              label: "Add",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bookmark_outline),
+              label: "Bookmarks",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.notifications_outlined),
+              label: "Notifications",
+            ),
+          ],
+        ),
       ),
     );
   }
+
   Widget _buildHeader(Map<String, dynamic> userInfo) {
     final backgroundColor = AppTheme.primaryColor;
     return Stack(
@@ -126,7 +142,7 @@ void didChangeDependencies() {
       children: [
         Container(
           width: double.infinity,
-          height: 220, 
+          height: 220,
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: const BorderRadius.only(
@@ -184,13 +200,13 @@ void didChangeDependencies() {
           Column(
             children: [
               Text("900", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, fontFamily: 'Poppins')),
-              Text("Seguidores", style: TextStyle(fontSize: 16, color: textColor, fontFamily: 'Poppins')),
+              Text("Followers", style: TextStyle(fontSize: 16, color: textColor, fontFamily: 'Poppins')),
             ],
           ),
           Column(
             children: [
               Text("200", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, fontFamily: 'Poppins')),
-              Text("Siguiendo", style: TextStyle(fontSize: 16, color: textColor, fontFamily: 'Poppins')),
+              Text("Following", style: TextStyle(fontSize: 16, color: textColor, fontFamily: 'Poppins')),
             ],
           ),
         ],
@@ -211,22 +227,23 @@ class RecommendationsSection extends ConsumerWidget {
       child: recommendationsAsync.when(
         data: (recommendations) {
           if (recommendations.isEmpty) {
-            return const Center(child: Padding(
+            return const Center(
+                child: Padding(
               padding: EdgeInsets.only(top: 50),
-              child: Text("No hay recomendaciones"),
+              child: Text("No recommendations available"),
             ));
           }
-          
+
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: GridView.builder(
               physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true, 
+              shrinkWrap: true,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 0.82, 
+                childAspectRatio: 0.82,
               ),
               itemCount: recommendations.length,
               itemBuilder: (context, index) {
@@ -236,15 +253,41 @@ class RecommendationsSection extends ConsumerWidget {
             ),
           );
         },
-        loading: () => Center(
-                        child: LoadingAnimationWidget.fourRotatingDots(
-                          color: AppTheme.primaryColor,
-                          size: 150,
-                        ),
-                      ),
+        loading: () => const SkeletonGridLoader(), // Nueva pantalla de skeleton
         error: (error, stackTrace) {
           print("❌ Error loading recommendations: $error");
           return const Center(child: Text("Failed to load recommendations"));
+        },
+      ),
+    );
+  }
+}
+
+// Skeleton Screen para cargar recomendaciones
+class SkeletonGridLoader extends StatelessWidget {
+  const SkeletonGridLoader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 0.82,
+        ),
+        itemCount: 6, // Se muestran 6 placeholders por defecto
+        itemBuilder: (context, index) {
+          return Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(20),
+              ),
+            );
         },
       ),
     );

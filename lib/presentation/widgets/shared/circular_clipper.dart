@@ -1,20 +1,19 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
-class CircularClipper extends CustomClipper<Rect> {
+/// Custom clipper for circular reveal animation
+class CircularClipper extends CustomClipper<Path> {
   final double size;
+  final Offset center;
 
-  CircularClipper(this.size);
+  CircularClipper(this.size, this.center);
 
   @override
-  Rect getClip(Size screenSize) {
-    double centerX = screenSize.width / 2;
-    double centerY = screenSize.height / 2;
-
-    double maxRadius = screenSize.longestSide * size; // 🔥 Usa longestSide para expandirse más
-
-    return Rect.fromCircle(center: Offset(centerX, centerY), radius: maxRadius);
+  Path getClip(Size size) { // ✅ Must match the overridden method
+    return Path()
+      ..addOval(Rect.fromCircle(
+        center: center,
+        radius: size.longestSide * this.size, // Expands to the longest screen side
+      ));
   }
 
   @override

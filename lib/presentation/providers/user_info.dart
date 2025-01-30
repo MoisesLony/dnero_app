@@ -1,40 +1,38 @@
 import 'dart:convert';
-
 import 'package:dnero_app_prueba/infrastructure/datasources/remote/aut_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dnero_app_prueba/presentation/image/image_cache_provider.dart';
 
 final userInfoProvider = StateNotifierProvider<UserInfoNotifier, Map<String, dynamic>>(
-  (ref) => UserInfoNotifier(),
+  (ref) => UserInfoNotifier(ref),
 );
 
 class UserInfoNotifier extends StateNotifier<Map<String, dynamic>> {
-  UserInfoNotifier() : super({});
+  final Ref ref;
+
+  UserInfoNotifier(this.ref) : super({});
 
   Future<void> fetchUserInfo(String token) async {
     try {
       final response = await AuthService().fetchUserInfo(token);
-      state = response;
-    } catch (e) {
-      print("Error fetching user info: $e");
-    }
-  }
 
-   // New method to fetch user info and decode base64 images
-  Future<void> fetchUserInfoWithImages(String token) async {
-    try {
-      // Fetch the user info
-      final response = await AuthService().fetchUserInfo(token);
-
-      // Decode the base64 image if it exists
+      // Check if an image exists in the response
       if (response.containsKey('image') && response['image'] is String) {
         final base64Image = response['image'] as String;
-        final decodedImage = base64Decode(base64Image);
-        response['decodedImage'] = decodedImage; // Add the decoded image to the response
+        final imageCache = ref.read(imageCacheProvider.notifier);
+
+        // Check if the image is already cached
+        if (imageCache.getImage("user_profile") == null) {
+          imageCache.cacheImage("user_profile", base64Image);
+        }
+
+        // Attach the cached image to the user info state
+        response['decodedImage'] = imageCache.getImage("user_profile");
       }
 
       state = response;
     } catch (e) {
-      print("Error fetching user info with images: $e");
+      print("🚨 Error fetching user info with images: $e");
     }
   }
 }
