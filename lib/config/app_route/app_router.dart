@@ -1,16 +1,7 @@
-import 'package:dnero_app_prueba/presentation/screens/categories/recommendations_details.dart';
+
+import 'package:dnero_app_prueba/presentation/screens/screens_barril.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:dnero_app_prueba/presentation/screens/auth/login/login_screen.dart';
-import 'package:dnero_app_prueba/presentation/screens/auth/login/otp_screen_login.dart';
-import 'package:dnero_app_prueba/presentation/screens/auth/register/register_screen.dart';
-import 'package:dnero_app_prueba/presentation/screens/auth/register/otp_screen_register.dart';
-import 'package:dnero_app_prueba/presentation/screens/auth/register/complete_info_screen.dart';
-import 'package:dnero_app_prueba/presentation/screens/categories/categories_screen.dart';
-import 'package:dnero_app_prueba/presentation/screens/categories/home_screen.dart';
-import 'package:dnero_app_prueba/presentation/screens/welcome/start_screen.dart';
-import 'package:dnero_app_prueba/presentation/screens/welcome/welcome_screen.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(

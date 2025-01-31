@@ -22,7 +22,7 @@ class OtpWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16 * scalingFactor), // Add some padding
       child: FadeIn(
-        duration: const Duration(milliseconds: 2500),
+        duration: const Duration(milliseconds: 800),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

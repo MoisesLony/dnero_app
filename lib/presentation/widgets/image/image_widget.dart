@@ -1,7 +1,7 @@
 import 'dart:typed_data';
+import 'package:dnero_app_prueba/presentation/providers/provider_barril.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dnero_app_prueba/presentation/image/image_cache_provider.dart';
 
 /// ✅ Profile image widget with circular border and shadow
 class ProfileImageWidget extends ConsumerWidget {

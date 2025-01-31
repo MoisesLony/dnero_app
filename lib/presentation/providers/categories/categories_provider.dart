@@ -1,5 +1,5 @@
 import 'package:dnero_app_prueba/infrastructure/datasources/remote/aut_service.dart';
-import 'package:dnero_app_prueba/presentation/image/image_cache_provider.dart';
+import 'package:dnero_app_prueba/presentation/providers/provider_barril.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /* =======================================================

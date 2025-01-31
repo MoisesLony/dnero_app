@@ -1,7 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:dnero_app_prueba/config/theme/app_theme.dart';
-import 'package:dnero_app_prueba/presentation/providers/token_provider.dart';
-import 'package:dnero_app_prueba/presentation/providers/user_info.dart';
+import 'package:dnero_app_prueba/presentation/providers/provider_barril.dart';
 import 'package:dnero_app_prueba/presentation/screens/welcome/background_video.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -74,19 +73,19 @@ class WelcomeScreen extends ConsumerWidget {
                       );
                     }
 
-                    // Render user information when available
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TweenAnimationBuilder(
-                            tween: Tween<double>(begin: 0.5, end: 1.0), // Comienza más pequeño y crece al tamaño normal
-                            duration: const Duration(milliseconds: 1500 ),
-                              curve: Curves.easeOut, // Hace que la animación sea más suave
-                              builder: (context, value, child) {
-                                return Transform.scale(
-                                  scale: value, // 🔥 Aplica el escalado gradual
-                                  child: Text(
+                  // Render user information when available
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TweenAnimationBuilder(
+                        tween: Tween<double>(begin: 0.5, end: 1.0), // Starts smaller and grows to normal size
+                        duration: const Duration(milliseconds: 1500),
+                        curve: Curves.easeOut, // Makes the animation smoother
+                        builder: (context, value, child) {
+                          return Transform.scale(
+                            scale: value, // 🔥 Applies gradual scaling effect
+                            child: Text(
                                     "¡Hola, ${userInfo['firstName']}!",
                                     style: TextStyle(
                                       fontSize: 40 * heightFactor,

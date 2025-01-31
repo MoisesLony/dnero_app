@@ -1,6 +1,6 @@
 import 'package:dnero_app_prueba/config/theme/app_theme.dart';
 import 'package:dnero_app_prueba/infrastructure/datasources/remote/aut_service.dart';
-import 'package:dnero_app_prueba/presentation/providers/token_provider.dart';
+import 'package:dnero_app_prueba/presentation/providers/provider_barril.dart';
 import 'package:dnero_app_prueba/presentation/widgets/shared/error_dialog.dart';
 import 'package:dnero_app_prueba/presentation/widgets/shared/otp_widget.dart';
 import 'package:flutter/material.dart';

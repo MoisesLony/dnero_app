@@ -52,7 +52,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (phone.isEmpty) {
       ShowErrorDialog.show(
-          context, "Error", "Escriba un número para continuar.");
+          context, "Error", "Escriba un número para\ncontinuar.");
       return;
     }
     if (phone.length != 9) {
@@ -61,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     if (_validMockPhones.contains(phone)) {
-      ShowErrorDialog.show(context, "Error", "Este número ya está registrado.");
+      ShowErrorDialog.show(context, "Error", "Este número ya está\nregistrado.");
       return;
     }
     String lastFourDigits = phone.length >= 4 ? phone.substring(phone.length - 4) : phone;
@@ -99,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final buttonColor = AppTheme.secondaryColor;
 
     final size = MediaQuery.of(context).size;
-    final double scalingFactor = size.height / 812; // Example: base height for scaling
+    final double scalingFactor = ((size.width / 375) + (size.height / 812)) / 2;
 
     return GestureDetector(
       onTap: () {
@@ -231,7 +231,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               SizedBox(
                                 child: LoadingAnimationWidget.waveDots (
                                   color: AppTheme.textPrimaryColor,
-                                  size: 26,
+                                  size: 26 * scalingFactor,
                                 ),
                                 
                               )

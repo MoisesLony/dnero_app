@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final phone = _phoneController.text;
 
     if (phone.isEmpty) {
-      ShowErrorDialog.show(context, "Error", "Debes de introducir un número");
+      ShowErrorDialog.show(context, "Error", "Debes de introducir un\nnúmero");
       return;
     }
 
@@ -85,8 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
     const Color textColorBlue = AppTheme.textPrimaryColor;
     const Color buttonColor = AppTheme.secondaryColor;
     final size = MediaQuery.of(context).size;
-    const double baseHeight = 812; // Base height for scaling
-    final double scalingFactor = size.height / baseHeight;
+  final double scalingFactor = ((size.width / 375) + (size.height / 812)) / 2;
 
     return GestureDetector(
       // Hide keyboard when tapping outside the text field

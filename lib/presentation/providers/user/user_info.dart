@@ -1,6 +1,6 @@
 import 'package:dnero_app_prueba/infrastructure/datasources/remote/aut_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dnero_app_prueba/presentation/image/image_cache_provider.dart';
+import 'package:dnero_app_prueba/presentation/providers/provider_barril.dart';
 
 /* =======================================================
   User Info Provider: Fetch and cache user information
@@ -38,6 +38,4 @@ class UserInfoNotifier extends StateNotifier<Map<String, dynamic>> {
     print("🚨 Error fetching user info: $e");
   }
 }
-
-
 }

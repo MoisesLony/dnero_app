@@ -13,6 +13,9 @@ class RecommendationDetailsScreen extends StatelessWidget {
     final double rating = (recommendation['calification'] as num?)?.toDouble() ?? 5.0;
     final int roundedRating = rating.floor();
 
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -23,17 +26,19 @@ class RecommendationDetailsScreen extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(screenWidth * 0.08),
+                    bottomRight: Radius.circular(screenWidth * 0.08),
                   ),
                   child: imageBytes != null
-                      ? Image.memory(imageBytes, height: 280, width: double.infinity, fit: BoxFit.cover)
-                      : Image.asset("assets/images/default.jpg", height: 280, width: double.infinity, fit: BoxFit.cover),
+                      ? Image.memory(imageBytes,
+                          height: screenHeight * 0.35, width: double.infinity, fit: BoxFit.cover)
+                      : Image.asset("assets/images/default.jpg",
+                          height: screenHeight * 0.35, width: double.infinity, fit: BoxFit.cover),
                 ),
                 Positioned(
-                  top: 40,
-                  left: 15,
+                  top: screenWidth * 0.05,
+                  left: screenWidth * 0.04,
                   child: CircleAvatar(
                     backgroundColor: Colors.white.withOpacity(0.3),
                     child: IconButton(
@@ -43,8 +48,8 @@ class RecommendationDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  top: 40,
-                  right: 15,
+                  top: screenWidth * 0.05,
+                  right: screenWidth * 0.04,
                   child: CircleAvatar(
                     backgroundColor: Colors.white.withOpacity(0.3),
                     child: IconButton(
@@ -58,35 +63,44 @@ class RecommendationDetailsScreen extends StatelessWidget {
             
             // 📍 Title & Location
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.02),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     recommendation['title'] ?? "No Title",
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color: AppTheme.textPrimaryColor,fontFamily: 'Poppins'),
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.06,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimaryColor,
+                      fontFamily: 'Poppins',
+                    ),
                   ),
-                  const SizedBox(height: 5),
+                  SizedBox(height: screenHeight * 0.005),
                   Row(
                     children: [
-                      const Icon(Icons.location_on, color: Colors.blue),
-                      const SizedBox(width: 5),
+                      Icon(Icons.location_on, color: Colors.blue, size: screenWidth * 0.06),
+                      SizedBox(width: screenWidth * 0.01),
                       Text(
                         recommendation['location'] ?? "Unknown Location",
-                        style: const TextStyle(fontSize: 16, color: Colors.grey),
+                        style: TextStyle(fontSize: screenWidth * 0.045, color: Colors.grey),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: screenHeight * 0.01),
                   Row(
                     children: [
                       ...List.generate(
                         roundedRating,
-                        (_) => Image.asset('assets/background/icono.png', width: 25, height: 22,color: Colors.orangeAccent,)), 
-                      const SizedBox(width: 5),
+                        (_) => Image.asset('assets/background/icono.png',
+                            width: screenWidth * 0.07,
+                            height: screenHeight * 0.06,
+                            color: Colors.orangeAccent),
+                      ),
+                      SizedBox(width: screenWidth * 0.01),
                       Text(
                         rating.toStringAsFixed(1),
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.bold),
                       ),
                     ],
                   )
@@ -95,24 +109,28 @@ class RecommendationDetailsScreen extends StatelessWidget {
             ),
             
             // 📖 About Section
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16,vertical:0),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.01),
               child: Text(
                 "Sobre este lugar:",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: AppTheme.primaryColor),
+                style: TextStyle(
+                  fontSize: screenWidth * 0.05,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryColor,
+                ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.02),
               child: Center(
                 child: Text(
                   recommendation['description'] ?? "No Description",
-                  style: const TextStyle(fontSize: 16, color: Colors.black87),
+                  style: TextStyle(fontSize: screenWidth * 0.045, color: Colors.black87),
                 ),
               ),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: screenHeight * 0.03),
           ],
         ),
       ),

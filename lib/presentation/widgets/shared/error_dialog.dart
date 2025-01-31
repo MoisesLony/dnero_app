@@ -19,18 +19,24 @@ class ShowErrorDialog extends StatelessWidget {
           fontWeight: FontWeight.bold
         ),),
       ),
-      content: 
 
-      Padding(
-        padding: const EdgeInsets.only(top: 5),
-        child: Text(message,
-          style: const TextStyle(
-            color: AppTheme.textPrimaryColor,
-            fontFamily: 'Poppins',
-          ),
-          ),
+
+      content: Padding(
+  padding: const EdgeInsets.only(top: 5,bottom: 0),
+  child: SizedBox(
+    height: 40, // Ajusta la altura máxima según sea necesario
+    child: SingleChildScrollView( // Permite desplazamiento si el texto es muy largo
+      child: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          color: AppTheme.textPrimaryColor,
+          fontFamily: 'Poppins',
+        ),
       ),
-    
+    ),
+  ),
+),
       actions: [
         const Divider(),
         Center(

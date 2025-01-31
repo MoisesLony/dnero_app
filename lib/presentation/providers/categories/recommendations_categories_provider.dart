@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:dnero_app_prueba/infrastructure/datasources/remote/aut_service.dart';
 import 'package:dnero_app_prueba/infrastructure/repositories/auth_repository_impl.dart';
-import 'package:dnero_app_prueba/presentation/providers/token_provider.dart';
+import 'package:dnero_app_prueba/presentation/providers/provider_barril.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dnero_app_prueba/presentation/providers/selected_categories_provider.dart';
+
 
 final recommendationsProvider = FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
   final authRepository = AuthRepositoryImpl(AuthService());

@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:dnero_app_prueba/config/theme/app_theme.dart';
-import 'package:dnero_app_prueba/presentation/image/image_cache_provider.dart';
-import 'package:dnero_app_prueba/presentation/providers/selected_categories_provider.dart';
-import 'package:dnero_app_prueba/presentation/providers/token_provider.dart';
+import 'package:dnero_app_prueba/presentation/providers/provider_barril.dart';
 import 'package:dnero_app_prueba/presentation/widgets/category_skeleton.dart';
 import 'package:flutter/material.dart';
-import 'package:dnero_app_prueba/presentation/providers/categories_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 

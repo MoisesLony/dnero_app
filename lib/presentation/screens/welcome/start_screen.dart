@@ -1,5 +1,4 @@
 import 'package:dnero_app_prueba/config/theme/app_theme.dart';
-import 'package:dnero_app_prueba/presentation/screens/auth/login/login_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
